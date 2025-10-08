@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TableTap - QR Code</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="https://via.placeholder.com/32" type="image/png">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        h1, h2, h3, h4, .brand-font {
+            font-family: 'Playfair Display', serif;
+            letter-spacing: 0.05em;
+        }
+
+        :root {
+            --primary-color: #FF6B6B;  
+            --secondary-color: #4ECDC4; 
+            --dark-color: #292F36;     
+            --light-color: #F7FFF7;    
+            --accent-color: #FFE66D;   
+        }
+        
+        #main-content {
+            background-color: white;
+            color: black;
+            min-height: 100vh;
+            padding: 20px 40px; 
+        }
+
+        .menu-bar {
+            background-color: #333;
+            min-height: 100vh;
+            color: #fff;
+        }
+
+        .menu-bar .btn:hover {
+            background-color: #FFB300;
+            transform: scale(1.05);
+        }
+
+        .menu-bar .btn {
+            width: 100%;
+            margin: 10px 0;
+            border-radius: 0.375rem;
+            background-color: #333;
+            color: #fff;
+            border: none;
+        }
+
+        .menu-bar .btn.active {
+            background-color: #FFC107;
+        }
+
+        .btn {
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        @media (max-width: 768px) {
+            .menu-item {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .menu-item-image {
+                margin-right: 0;
+                margin-bottom: 15px;
+                width: 100%;
+                height: 200px;
+            }
+        }
+
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container-fluid {
+            flex: 1;
+        }
+
+        footer {
+            background-color: var(--dark-color);
+            color: white;
+            padding: 20px 0;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Left menu bar -->
+            <div class="col-md-3 col-lg-2 menu-bar p-3">
+                <h4 class="text-center mb-4">
+                    <a href="{% url 'index' %}" class="text-decoration-none text-white">TableTap</a>
+                </h4>
+                <a href="{% url 'login' %}" class="btn" id="loginBtn">Login</a>
+                <a href="{% url 'editmenu' %}" class="btn" id="editMenuBtn">Edit Menu</a>
+                <a href="{% url 'order' %}" class="btn" id="viewOrdersBtn">View Orders</a>
+                <a href="{% url 'qrcode' %}" class="btn active" id="generateQRCodeBtn">Generate QR Code</a>
+            </div>
+            
+            <!-- Main content area -->
+            <div class="col-md-9 col-lg-10" id="main-content">
+                <div id="generateQRCodePage">
+                    <h2>Generate QR Code</h2>
+                    <div class="mb-3">
+                        <label for="table-number" class="form-label">Table Number</label>
+                        <input type="text" class="form-control" id="table-number" required>
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="generateQRCode()">Generate QR Code</button>
+                    <div id="qr-code-container" class="mt-4"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function generateQRCode() {
+            const tableNumber = document.getElementById('table-number').value.trim();
+            const qrCodeContainer = document.getElementById('qr-code-container');
+    
+            if (!tableNumber) {
+                alert("Please enter table number");
+                return;
+            }
+    
+            const url = `${window.location.origin}/tabletap/table/${tableNumber}`;
+   
+            qrCodeContainer.innerHTML = `<h5>QR code for Table ${tableNumber}</h5>`;
+    
+            new QRCode(qrCodeContainer, {
+                text: url,
+                width: 200,
+                height: 200,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+        }
+    </script>
+    
+</body>
+</html>

@@ -1,0 +1,1098 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TableTap - Edit Menu</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="https://via.placeholder.com/32" type="image/png">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        h1, h2, h3, h4, .brand-font {
+            font-family: 'Playfair Display', serif;
+            letter-spacing: 0.05em;
+        }
+
+        :root {
+            --primary-color: #FF6B6B;  
+            --secondary-color: #4ECDC4; 
+            --dark-color: #292F36;    
+            --light-color: #F7FFF7;   
+            --accent-color: #FFE66D;   
+        }
+
+        .menu-bar {
+            background-color: var(--dark-color);
+        }
+
+        .menu-bar .btn:hover {
+            background-color: var(--primary-color);
+        }
+
+        .menu-bar .btn.active {
+            background-color: var(--accent-color);
+            color: var(--dark-color);
+        }
+
+        .menu-item-price {
+            color: var(--primary-color);
+        }
+
+        .default-page {
+            background-image: url('image.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .default-page h2, .default-page p {
+            color: white;
+            font-size: 100px;
+            font-weight: bold;
+            letter-spacing: 0.25em;
+            margin: 0;
+        }
+
+        #main-content {
+            background-color: white;
+            color: black;
+            min-height: 100vh;
+            padding: 20px 40px; 
+        }
+
+        .menu-bar {
+            background-color: #333;
+            min-height: 100vh;
+            color: #fff;
+        }
+
+        .menu-bar .btn:hover {
+            background-color: #FFB300;
+            transform: scale(1.05);
+        }
+
+        .menu-bar .btn {
+            width: 100%;
+            margin: 10px 0;
+            border-radius: 0.375rem;
+            background-color: #333;
+            color: #fff;
+            border: none;
+        }
+
+        .menu-bar .btn.active {
+            background-color: #FFC107;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .menu-item:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+        }
+
+        .menu-item-image {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-right: 20px;
+            flex-shrink: 0; 
+        }
+
+        .menu-item-details {
+            flex-grow: 1;
+            padding: 0 15px;
+        }
+        
+        .menu-item-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .menu-item-description {
+            font-size: 14px;
+            color: #666;
+            font-style: italic;
+        }
+
+        .menu-item-price {
+            width: 100px;
+            text-align: right;
+            font-size: 18px;
+            font-weight: bold;
+            color: #FF6B6B;
+            flex-shrink: 0; 
+        }
+
+        #editMenuModal .modal-content {
+            border-radius: 16px;
+            overflow: hidden;
+            border: none;
+        }
+
+        #editMenuModal .modal-header {
+            background-color: var(--dark-color);
+            color: white;
+        }
+
+        #editMenuModal .btn-close {
+            filter: invert(1);
+        }
+
+        #editMenuModal .list-group-item.active {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        #editMenuModal .btn-success {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+
+        .modal-body .list-group-item {
+            cursor: pointer;
+        }
+
+        .modal-body .list-group-item.active {
+            background-color: #FFC107;
+            border-color: #FFC107;
+        }
+
+        .btn {
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .menu-card {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+
+        .menu-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 16px rgba(0,0,0,0.2);
+        }
+
+        .menu-card-header {
+            background-color: var(--dark-color);
+            color: white;
+            padding: 15px;
+            font-weight: 600;
+        }
+
+        .menu-card-body {
+            padding: 20px;
+            background-color: white;
+        }
+
+        .menu-card-footer {
+            background-color: #f8f9fa;
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-between;
+            border-top: 1px solid #dee2e6;
+        }
+
+        @media (max-width: 768px) {
+            .menu-item {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .menu-item-image {
+                margin-right: 0;
+                margin-bottom: 15px;
+                width: 100%;
+                height: 200px;
+            }
+        }
+
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container-fluid {
+            flex: 1;
+        }
+
+        footer {
+            background-color: var(--dark-color);
+            color: white;
+            padding: 20px 0;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Left menu bar -->
+            <div class="col-md-3 col-lg-2 menu-bar p-3">
+                <h4 class="text-center mb-4">
+                    <a href="{% url 'index' %}" class="text-decoration-none text-white">TableTap</a>
+                </h4>
+                <a href="{% url 'login' %}" class="btn" id="loginBtn">Login</a>
+                <a href="{% url 'editmenu' %}" class="btn active" id="editMenuBtn">Edit Menu</a>
+                <a href="{% url 'order' %}" class="btn" id="viewOrdersBtn">View Orders</a>
+                <a href="{% url 'qrcode' %}" class="btn" id="generateQRCodeBtn">Generate QR Code</a>
+            </div>
+            
+            <!-- Main content area -->
+            <div class="col-md-9 col-lg-10" id="main-content">
+                <div id="menuListPage">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2>Menu Management</h2>
+                        <button id="createMenuButton" class="btn btn-success">Create New Menu</button>
+                    </div>
+                    <div id="menu-list-display" class="row"></div>
+                </div>
+                
+                <div id="editMenuPage" style="display: none;">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            <button id="backToMenusButton" class="btn btn-secondary me-2">
+                                <i class="fas fa-arrow-left"></i> Back to Menus
+                            </button>
+                            <h2 class="d-inline-block" id="currentMenuTitle">Menu</h2>
+                        </div>
+                        <button id="editMenuButton" class="btn btn-primary">Edit</button>
+                    </div>
+                    <div id="menu-display"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+            
+    <!-- Edit Modal -->
+    <div class="modal fade" id="editMenuModal" tabindex="-1" aria-labelledby="editMenuModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editMenuModalLabel">Edit Menu</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div id="category-list" class="list-group"></div>
+                            <div class="input-group mt-2">
+                                <input type="text" id="newCategoryName" class="form-control" placeholder="New category">
+                                <button class="btn btn-success" onclick="addCategory()">+</button>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div id="item-list">
+                                <p class="text-muted">Select a category to edit items</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="saveMenuChanges()">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Menu Modal -->
+    <div class="modal fade" id="createMenuModal" tabindex="-1" aria-labelledby="createMenuModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createMenuModalLabel">Create New Menu</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="newMenuName" class="form-label">Menu Name</label>
+                        <input type="text" class="form-control" id="newMenuName" placeholder="Enter menu name">
+                    </div>
+                    <div class="mb-3">
+                        <label for="newMenuDescription" class="form-label">Description (optional)</label>
+                        <textarea class="form-control" id="newMenuDescription" rows="3" placeholder="Enter menu description"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-success" onclick="createNewMenu()">Create</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Menu Info Modal -->
+    <div class="modal fade" id="editMenuInfoModal" tabindex="-1" aria-labelledby="editMenuInfoModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editMenuInfoModalLabel">Edit Menu Information</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="editMenuName" class="form-label">Menu Name</label>
+                        <input type="text" class="form-control" id="editMenuName" placeholder="Enter menu name">
+                    </div>
+                    <div class="mb-3">
+                        <label for="editMenuDescription" class="form-label">Description</label>
+                        <textarea class="form-control" id="editMenuDescription" rows="3" placeholder="Enter menu description"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>                                
+                    <button type="button" class="btn btn-primary" onclick="saveMenuInfo()">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-dark text-light py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <p>&copy; 2025 TableTap. All rights reserved.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <a href="#" class="text-light me-3">Privacy Policy</a>
+                    <a href="#" class="text-light">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    // Global variables
+    let allMenus = [];
+    let menuData = {}; // Current active menu data
+    let currentMenuId = null;
+    let selectedCategory = null;
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize the application
+        fetchMenus();
+        
+        // Setup event listeners
+        document.getElementById('createMenuButton').addEventListener('click', function() {
+            var modal = new bootstrap.Modal(document.getElementById('createMenuModal'));
+            modal.show();
+        });
+        
+        document.getElementById('editMenuButton').addEventListener('click', function() {
+            renderEditModal();
+            var modal = new bootstrap.Modal(document.getElementById('editMenuModal'));
+            modal.show();
+        });
+        
+        document.getElementById('backToMenusButton').addEventListener('click', function() {
+            backToMenuList();
+        });
+        
+        // Navigation styling
+        document.getElementById('editMenuBtn').classList.add('active');
+        document.getElementById('loginBtn').classList.remove('active');
+        
+        // Add context menu functionality
+        document.addEventListener('contextmenu', function(e) {
+            const menuCard = e.target.closest('.menu-card');
+            if (menuCard) {
+                e.preventDefault();
+                const menuId = parseInt(menuCard.dataset.menuId);
+                const menu = allMenus.find(m => m.id === menuId);
+                if (menu) {
+                    document.getElementById('editMenuName').value = menu.name;
+                    document.getElementById('editMenuDescription').value = menu.description || '';
+                    currentMenuId = menuId;
+                    var modal = new bootstrap.Modal(document.getElementById('editMenuInfoModal'));
+                    modal.show();
+                }
+            }
+        });
+    });
+
+    // Fetch menus from the API
+    function fetchMenus() {
+        fetch('/tabletap/api/menus/')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to fetch menus');
+                }
+                return response.json();
+            })
+            .then(data => {
+                allMenus = data.menus; // API returns { menus: [...] }
+                renderMenuListDisplay();
+            })
+            .catch(error => {
+                console.error('Error fetching menus:', error);
+                // Display error message to user
+                document.getElementById('menu-list-display').innerHTML = 
+                    `<div class="col-12 alert alert-danger">Failed to load menus: ${error.message}</div>`;
+            });
+    }
+
+    // Render menu list display
+    function renderMenuListDisplay() {
+        const container = document.getElementById('menu-list-display');
+        container.innerHTML = '';
+
+        if (!allMenus || allMenus.length === 0) {
+            container.innerHTML = '<div class="col-12"><p class="text-muted">No menus available. Create a new menu to get started.</p></div>';
+            return;
+        }
+
+        allMenus.forEach(menu => {
+            // Count categories
+            const categoryCount = Object.keys(menu.data || {}).length;
+            
+            const menuCard = document.createElement('div');
+            menuCard.className = 'col-md-6 col-lg-4 mb-4';
+            menuCard.innerHTML = `
+                <div class="menu-card" data-menu-id="${menu.id}">
+                    <div class="menu-card-header">
+                        ${menu.name}
+                    </div>
+                    <div class="menu-card-body">
+                        <p>${menu.description || 'No description'}</p>
+                        <p><small class="text-muted">${categoryCount} categories</small></p>
+                    </div>
+                    <div class="menu-card-footer">
+                        <button class="btn btn-sm btn-outline-primary edit-menu-btn">
+                            <i class="fas fa-edit"></i> Edit Menu
+                        </button>
+                        <button 
+                        id="toggleActiveButton-${menu.id}" 
+                        type="button" 
+                        class="btn btn-sm ${menu.active ? 'btn-outline-success' : 'btn-outline-danger'}"
+                        onclick="toggleMenuActive(${menu.id})">
+                        ${menu.active? 'Active': 'Inactive'}
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger delete-menu-btn">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </div>
+                    </div>
+                </div>
+            `;
+            container.appendChild(menuCard);
+
+            // Add event listeners
+            const card = menuCard.querySelector('.menu-card');
+            card.addEventListener('click', function(e) {
+                if (!e.target.closest('button')) {
+                    loadMenu(menu.id);
+                }
+            });
+
+            const editButton = menuCard.querySelector('.edit-menu-btn');
+            editButton.addEventListener('click', function(e) {
+                e.stopPropagation();
+                loadMenu(menu.id);
+            });
+
+            const deleteButton = menuCard.querySelector('.delete-menu-btn');
+            deleteButton.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (confirm(`Are you sure you want to delete the "${menu.name}" menu?`)) {
+                    deleteMenu(menu.id);
+                }
+            });
+        });
+    }
+
+    // Load menu for editing
+    function loadMenu(menuId) {
+        const menu = allMenus.find(m => m.id === menuId);
+        if (!menu) return;
+
+        currentMenuId = menuId;
+        menuData = JSON.parse(JSON.stringify(menu.data || {})); // Deep copy menu data
+
+        document.getElementById('currentMenuTitle').textContent = menu.name;
+        document.getElementById('menuListPage').style.display = 'none';
+        document.getElementById('editMenuPage').style.display = 'block';
+
+        renderMenuDisplay();
+    }
+
+    // Delete menu via API
+    function deleteMenu(menuId) {
+        const csrftoken = getCookie('csrftoken');
+        fetch(`/tabletap/api/menu/${menuId}/`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRFToken': csrftoken,
+            },
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to delete menu');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                // Remove from local array
+                allMenus = allMenus.filter(menu => menu.id !== menuId);
+                renderMenuListDisplay();
+                alert('Menu deleted successfully!');
+            } else {
+                throw new Error(data.error || 'Unknown error occurred');
+            }
+        })
+        .catch(error => {
+            console.error('Error deleting menu:', error);
+            alert(`Failed to delete menu: ${error.message}`);
+        });
+    }
+
+    // Create new menu
+    function createNewMenu() {
+        console.log('hi'); 
+        const menuName = document.getElementById('newMenuName').value.trim();
+        const menuDescription = document.getElementById('newMenuDescription').value.trim();
+        
+        
+        if (!menuName) {
+            alert('Please enter a menu name');
+            console.log('enter'); 
+            return;
+        }
+        
+        const newMenuData = {
+            name: menuName,
+            description: menuDescription
+        };
+        console.log('Sending data:', {name: menuName, description: menuDescription}); 
+        
+        const csrftoken = getCookie('csrftoken');
+        console.log('CSRF Token:', csrftoken);
+        fetch('/tabletap/api/menus/create/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken,
+            },
+            body: JSON.stringify(newMenuData),
+            credentials: 'include' 
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to create menu');
+                console.log('areyouok'); 
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                // Add new menu to array (with the ID from server)
+                const newMenu = {
+                    id: data.id,
+                    name: data.name,
+                    description: data.description || '',
+                    data: {}
+                };
+                allMenus.push(newMenu);
+                
+                // Close modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('createMenuModal'));
+                modal.hide();
+                
+                // Clear form
+                document.getElementById('newMenuName').value = '';
+                document.getElementById('newMenuDescription').value = '';
+                
+                // Update UI
+                renderMenuListDisplay();
+                alert('Menu created successfully!');
+                
+                // Option: directly load the new menu for editing
+                loadMenu(data.id);
+            } else {
+                throw new Error(data.error || 'Unknown error occurred');
+            }
+        })
+        .catch(error => {
+            console.error('Error creating menu:', error);
+            alert(`Failed to create menu: ${error.message}`);
+        });
+    }
+
+    // Save menu info (name, description, active)
+    function saveMenuInfo() {
+    const menuName = document.getElementById('editMenuName').value.trim();
+    const menuDescription = document.getElementById('editMenuDescription').value.trim();
+
+    if (!menuName) {
+        alert('Please enter a menu name');
+        return;
+    }
+
+    const updatedData = {
+        name: menuName,
+        description: menuDescription,
+        active: isMenuActive 
+    };
+
+    const csrftoken = getCookie('csrftoken');
+    fetch(`/tabletap/api/menu/${currentMenuId}/`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrftoken,
+        },
+        body: JSON.stringify(updatedData)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to update menu info');
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            const menuIndex = allMenus.findIndex(m => m.id === currentMenuId);
+            if (menuIndex !== -1) {
+                allMenus[menuIndex].name = menuName;
+                allMenus[menuIndex].description = menuDescription;
+                allMenus[menuIndex].active = isMenuActive;
+
+                document.getElementById('currentMenuTitle').textContent = menuName;
+                updateToggleButton(); 
+            }
+
+            const modal = bootstrap.Modal.getInstance(document.getElementById('editMenuInfoModal'));
+            modal.hide();
+
+            alert('Menu information updated successfully!');
+        } else {
+            throw new Error(data.error || 'Unknown error occurred');
+        }
+    })
+    .catch(error => {
+        console.error('Error updating menu info:', error);
+        alert(`Failed to update menu info: ${error.message}`);
+    });
+}
+
+
+    // Render the menu display (view mode)
+    function renderMenuDisplay() {
+        const container = document.getElementById('menu-display');
+        container.innerHTML = '';
+        
+        if (Object.keys(menuData).length === 0) {
+            container.innerHTML = '<p class="text-muted">This menu has no categories or items yet. Click the "Edit" button to add content.</p>';
+            return;
+        }
+        
+        // Loop through categories and items
+        Object.keys(menuData).forEach(category => {
+            const categoryTitle = document.createElement('h3');
+            categoryTitle.className = 'category-title mt-4 mb-3';
+            categoryTitle.textContent = category;
+            container.appendChild(categoryTitle);
+            
+            const items = menuData[category];
+            if (items && items.length > 0) {
+                items.forEach(item => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'menu-item';
+                    itemDiv.innerHTML = `
+                        <img src="${item.image || 'https://via.placeholder.com/100x100?text=Food'}"
+                            class="menu-item-image"
+                            alt="${item.name}">
+                        <div class="menu-item-details">
+                            <div class="menu-item-name">${item.name}</div>
+                            ${item.description ? `<div class="menu-item-description">${item.description}</div>` : ''}
+                        </div>
+                        <div class="menu-item-price">$${parseFloat(item.price).toFixed(2)}</div>
+                    `;
+                    container.appendChild(itemDiv);
+                });
+            } else {
+                const emptyMessage = document.createElement('p');
+                emptyMessage.className = 'text-muted';
+                emptyMessage.textContent = 'No items in this category.';
+                container.appendChild(emptyMessage);
+            }
+        });
+    }
+
+    // Render the edit modal (categories and items)
+    function renderEditModal() {
+        const categoryList = document.getElementById('category-list');
+        categoryList.innerHTML = '';
+        
+        // Add each category to the list
+        Object.keys(menuData).forEach(category => {
+            const categoryElement = document.createElement('button');
+            categoryElement.className = `list-group-item list-group-item-action text-start d-flex justify-content-between align-items-center ${selectedCategory === category ? 'active' : ''}`;
+            categoryElement.innerHTML = `
+                <span>${category}</span>
+                <div>
+                    <button class="btn btn-sm btn-outline-secondary me-1" onclick="event.stopPropagation(); editCategoryName('${category}')">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger" onclick="event.stopPropagation(); removeCategory('${category}')">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                </div>
+            `;
+            categoryElement.addEventListener('click', () => {
+                selectedCategory = category;
+                renderEditModal();
+            });
+            categoryList.appendChild(categoryElement);
+        });
+        
+        renderItemList();
+    }
+
+    // Render the item list for the selected category
+    function renderItemList() {
+        const itemList = document.getElementById('item-list');
+        if (!selectedCategory) {
+            itemList.innerHTML = '<p class="text-muted">Select a category to edit items</p>';
+            return;
+        }
+        
+        itemList.innerHTML = `
+            <h4>${selectedCategory}</h4>
+            <div class="list-group mb-3">
+                ${(menuData[selectedCategory] || []).map((item, index) => `
+                    <div class="list-group-item">
+                        <div class="row align-items-center">
+                            <div class="col-md-3">
+                                <img src="${item.image || 'https://via.placeholder.com/100x100?text=No+Image'}" class="img-thumbnail" style="width: 100px; height: 100px; object-fit: cover;">
+                            </div>
+                            <div class="col-md-4">
+                                <input type="text" class="form-control mb-2" value="${item.name}" onchange="updateItemField(${index}, 'name', this.value)">
+                            </div>
+                            <div class="col-md-3">
+                                <input type="number" class="form-control mb-2" step="0.01" value="${item.price}" onchange="updateItemField(${index}, 'price', this.value)">
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-danger btn-sm" onclick="removeItem(${index})">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-md-12">
+                                <div class="input-group mb-2">
+                                    <input type="text" class="form-control" placeholder="Item description" id="description-${index}" value="${item.description || ''}" onchange="updateItemField(${index}, 'description', this.value)">
+                                    <button class="btn btn-outline-secondary" type="button" onclick="generateAIDescription(${index})">
+                                        <i class="fas fa-magic"></i> AI
+                                    </button>
+                                </div>
+                                <pre id="menu-output-${index}" class="mt-2 p-2 bg-light border rounded small" style="white-space: pre-wrap;"></pre>
+
+                                <input type="file" class="form-control" accept="image/*" onchange="uploadItemImage(${index}, this)">
+                            </div>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+            <button class="btn btn-success" onclick="addNewItem()">Add New Item</button>
+        `;
+    }
+
+    // Add a new category
+    function addCategory() {
+        const newCategoryName = document.getElementById('newCategoryName').value.trim();
+        if (newCategoryName && !menuData[newCategoryName]) {
+            menuData[newCategoryName] = [];
+            document.getElementById('newCategoryName').value = '';
+            selectedCategory = newCategoryName;
+            renderEditModal();
+        } else if (menuData[newCategoryName]) {
+            alert('A category with this name already exists');
+        }
+    }
+
+    // Edit category name
+    function editCategoryName(oldName) {
+        const newName = prompt("Enter new category name:", oldName);
+        if (newName && newName !== oldName && !menuData[newName]) {
+            menuData[newName] = menuData[oldName];
+            delete menuData[oldName];
+            if (selectedCategory === oldName) {
+                selectedCategory = newName;
+            }
+            renderEditModal();
+        } else if (newName === oldName) {
+            // No change needed
+            return;
+        } else if (menuData[newName]) {
+            alert('A category with this name already exists');
+        }
+    }
+
+    // Remove a category
+    function removeCategory(category) {
+        if (confirm(`Are you sure you want to delete the "${category}" category and all its items?`)) {
+            delete menuData[category];
+            if (selectedCategory === category) {
+                selectedCategory = null;
+            }
+            renderEditModal();
+        }
+    }
+
+    // Add a new item to the selected category
+    function addNewItem() {
+        if (!selectedCategory) return;
+        if (!menuData[selectedCategory]) {
+            menuData[selectedCategory] = [];
+        }
+        menuData[selectedCategory].push({
+            name: 'New Item',
+            price: 0,
+            description: '',
+            image: ''
+        });
+        renderEditModal();
+    }
+
+    // Remove an item from the selected category
+    function removeItem(index) {
+        if (!selectedCategory) return;
+        menuData[selectedCategory].splice(index, 1);
+        renderEditModal();
+    }
+
+    // Update an item field value
+    function updateItemField(index, field, value) {
+        if (!selectedCategory) return;
+        if (field === 'price') {
+            value = parseFloat(value) || 0;
+        }
+        menuData[selectedCategory][index][field] = value;
+    }
+
+    // Upload an image for an item
+    function uploadItemImage(index, input) {
+        if (!selectedCategory || !input.files || !input.files[0]) return;
+        const file = input.files[0];
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            menuData[selectedCategory][index].image = e.target.result;
+            renderEditModal();
+        };
+        reader.readAsDataURL(file);
+    }
+
+    // Save menu changes
+    function saveMenuChanges() {
+        const csrftoken = getCookie('csrftoken');
+        const menuDataToSave = { data: menuData };
+        
+        fetch(`/tabletap/api/menu/${currentMenuId}/data/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken,
+            },
+            body: JSON.stringify(menuDataToSave)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to save menu data');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                // Update the menu in allMenus array
+                const menuIndex = allMenus.findIndex(m => m.id === currentMenuId);
+                if (menuIndex !== -1) {
+                    allMenus[menuIndex].data = JSON.parse(JSON.stringify(menuData)); // Deep copy
+                }
+                
+                // Close modal and update UI
+                const modal = bootstrap.Modal.getInstance(document.getElementById('editMenuModal'));
+                modal.hide();
+                
+                renderMenuDisplay();
+                alert('Menu saved successfully!');
+            } else {
+                throw new Error(data.error || 'Unknown error occurred');
+            }
+        })
+        .catch(error => {
+            console.error('Error saving menu data:', error);
+            alert(`Failed to save menu: ${error.message}`);
+        });
+    }
+
+    // Back to menu list
+    function backToMenuList() {
+        document.getElementById('menuListPage').style.display = 'block';
+        document.getElementById('editMenuPage').style.display = 'none';
+        // Refresh the menu list
+        fetchMenus();
+    }
+
+    function generateAIDescription(index) {
+        const inputEl = document.getElementById(`description-${index}`);
+        const outputEl = document.getElementById(`menu-output-${index}`);
+        const description = inputEl.value.trim();
+
+        if (!description) {
+            outputEl.textContent = 'Please enter the key words of the dish and then click the AI button';
+            return;
+        }
+
+        outputEl.textContent = 'The recommended description is being generated. Please wait...';
+
+        // CSRF token
+        const csrftoken = getCookie('csrftoken');
+        
+        // Print the request information for debugging
+        console.log("Send a request to:", '/tabletap/generate_menu/');
+        console.log("Request content:", {description: description});
+
+        fetch('/tabletap/generate_menu/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken,
+            },
+            body: JSON.stringify({
+                description: description
+            }),
+            credentials: 'same-origin'
+        })
+        .then(response => {
+            console.log("Received the response status:", response.status);
+            if (!response.ok) {
+                return response.text().then(text => {
+                    throw new Error(`HTTP error! status: ${response.status}, body: ${text}`);
+                });
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log("Receive the data:", data);
+            if (data.menu) {
+                outputEl.textContent = data.menu;
+                inputEl.value = data.menu; 
+                updateItemField(index, 'description', data.menu); 
+            } else {
+                outputEl.textContent = 'Generation failed:' + (data.error || 'Unknown error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            outputEl.textContent = 'Request failed:' + error.message;
+        });
+    }
+
+    // The function for obtaining the CSRF token
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // MenuActive
+    function toggleMenuActive(menuId) {
+        const menu = allMenus.find(m => m.id === menuId);
+        if (!menu) return;
+
+        const newActiveStatus = !menu.active;
+
+        const csrftoken = getCookie('csrftoken');
+        fetch(`/tabletap/api/menu/${menuId}/`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken,
+            },
+            body: JSON.stringify({ active: newActiveStatus })
+        })
+        .then(response => {
+            if (!response.ok) throw new Error('Failed to update active status');
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                menu.active = newActiveStatus;
+
+                const button = document.getElementById(`toggleActiveButton-${menuId}`);
+                if (newActiveStatus) {
+                    button.textContent = 'Active';
+                    button.classList.remove('btn-outline-danger');
+                    button.classList.add('btn-outline-success');
+                } else {
+                    button.textContent = 'Inactive';
+                    button.classList.remove('btn-outline-success');
+                    button.classList.add('btn-outline-danger');
+                }
+            } else {
+                throw new Error(data.error || 'Unknown error');
+            }
+        })
+        .catch(error => {
+            console.error('Toggle active failed:', error);
+            alert(`Failed to toggle active status: ${error.message}`);
+        });
+    }
+
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TableTap - View Orders</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="https://via.placeholder.com/32" type="image/png">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        h1, h2, h3, h4, .brand-font {
+            font-family: 'Playfair Display', serif;
+            letter-spacing: 0.05em;
+        }
+
+        .menu-bar {
+            background-color: #333;
+            min-height: 100vh;
+            color: #fff;
+        }
+
+        .menu-bar .btn:hover {
+            background-color: #FFB300;
+            transform: scale(1.05);
+        }
+
+        .menu-bar .btn {
+            width: 100%;
+            margin: 10px 0;
+            border-radius: 0.375rem;
+            background-color: #333;
+            color: #fff;
+            border: none;
+        }
+
+        .menu-bar .btn.active {
+            background-color: #FFC107;
+        }
+        .content-area {
+            padding: 20px;
+        }
+        .page-title {
+            font-family: 'Playfair Display', serif;
+            margin-bottom: 30px;
+        }
+        .order-card {
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+        .order-card:hover {
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        }
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .table-number {
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        .order-time {
+            color: #6c757d;
+        }
+        .order-status {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+        .status-pending {
+            background-color: #ffc107;
+            color: #212529;
+        }
+        .status-completed {
+            background-color: #28a745;
+            color: white;
+        }
+        .order-items {
+            margin-top: 10px;
+        }
+        .modal-body {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .search-filters {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+        <!-- Left menu bar -->
+        <div class="col-md-3 col-lg-2 menu-bar p-3">
+            <h4 class="text-center mb-4">
+                <a href="{% url 'index' %}" class="text-decoration-none text-white">TableTap</a>
+            </h4>
+            <a href="{% url 'login' %}" class="btn" id="loginBtn">Login</a>
+            <a href="{% url 'editmenu' %}" class="btn" id="editMenuBtn">Edit Menu</a>
+            <a href="{% url 'order' %}" class="btn active" id="viewOrdersBtn">View Orders</a>
+            <a href="{% url 'qrcode' %}" class="btn" id="generateQRCodeBtn">Generate QR Code</a>
+        </div>
+
+            <!-- Main content area -->
+            <div class="col-md-9 col-lg-10 content-area">
+                <h2 class="page-title">Order History</h2>
+                
+                <!-- Search and filter options -->
+                <div class="row search-filters">
+                    <div class="col-md-4 mb-3">
+                        <input type="text" class="form-control" id="searchOrder" placeholder="Search orders...">
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <select class="form-select" id="filterStatus">
+                            <option value="all">All Status</option>
+                            <option value="pending">Pending</option>
+                            <option value="completed">Completed</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 mb-3">
+                    </div>
+                </div>
+                
+                <div class="orders-container">
+                    {% for order in orders %}
+                    <div class="card order-card" data-order-id="{{ order.id }}" data-table="{{ order.table.table_number }}">
+                        <div class="card-body">
+                            <div class="order-header">
+                                <div>
+                                    <span class="table-number">Table {{ order.table_number}}</span>
+                                    <span class="order-time">{{ order.updated_at|date:"Y-m-d h:i A" }}</span>
+                                </div>
+                                <div>
+                                    {% if order.status == 'pending' %}
+                                    <span class="order-status status-pending">Pending</span>
+                                    {% else %}
+                                    <span class="order-status status-completed">Completed</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="order-items">
+                                <p><strong>Items:</strong> {{ order.total_items }} dishes, Total: ${{ order.total_price }}</p>
+                            </div>
+                            <div class="d-flex justify-content-between mt-3">
+                                <button class="btn btn-sm btn-outline-primary view-details-btn" data-bs-toggle="modal" data-bs-target="#orderDetailsModal" data-order-id="{{ order.id }}">
+                                    <i class="fas fa-eye"></i> View Details
+                                </button>
+                                {% if order.status == 'pending' %}
+                                <button class="btn btn-sm btn-success mark-complete-btn">
+                                    <i class="fas fa-check"></i> Mark as Complete
+                                </button>
+                                {% else %}
+                                <button class="btn btn-sm btn-secondary" disabled>
+                                    <i class="fas fa-check"></i> Completed
+                                </button>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Store order items data as a data attribute (JSON encoded) -->
+                            <div class="d-none order-detail-data" 
+                                 data-order-id="{{ order.id }}" 
+                                 data-table="{{ order.table.table_number }}"
+                                 data-status="{{ order.status }}"
+                                 data-date="{{ order.date }}"
+                                 data-time="{{ order.time }}"
+                                 data-items="{{ order.items|safe }}"></div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p>No orders found.</p>
+                    {% endfor %}
+                </div>
+                
+                <!-- Updated Order Details Modal -->
+                <div class="modal fade" id="orderDetailsModal" tabindex="-1" aria-labelledby="orderDetailsModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="orderDetailsModalLabel">Order Details</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body" id="orderModalContent">
+                                <div class="order-info mb-4">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <p><strong>Order ID:</strong> <span id="modalOrderId"></span></p>
+                                            <p><strong>Table:</strong> <span id="modalTable"></span></p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p><strong>Date:</strong> <span id="modalDate"></span></p>
+                                            <p><strong>Time:</strong> <span id="modalTime"></span></p>
+                                        </div>
+                                    </div>
+                                    <p><strong>Status:</strong> <span id="modalStatus" class="badge"></span></p>
+                                </div>
+                                
+                                <h6>Order Items</h6>
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Item</th>
+                                            <th>Quantity</th>
+                                            <th>Price</th>
+                                            <th>Subtotal</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="modalItemsTable">
+                                        <!-- Items will be added here dynamically -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+        </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    $(document).ready(function() {
+        // Mark order as complete
+        $('.mark-complete-btn').click(function() {
+            const orderCard = $(this).closest('.order-card');
+            const statusBadge = orderCard.find('.order-status');
+            
+            statusBadge.removeClass('status-pending').addClass('status-completed');
+            statusBadge.text('Completed');
+            
+            $(this).removeClass('btn-success').addClass('btn-secondary');
+            $(this).text('Completed').prop('disabled', true);
+            $(this).html('<i class="fas fa-check"></i> Completed');
+            
+            const orderId = orderCard.data('order-id');
+            console.log('Order ' + orderId + ' marked as complete');
+            
+        });
+        
+        // View order details
+        $('.view-details-btn').click(function() {
+            const orderId = $(this).data('order-id');
+            
+            $.ajax({
+                url: `/tabletap/get-order-details/${orderId}/`,
+                type: 'GET',
+                success: function(data) {
+                    // Set up modal content with the fetched data
+                    let orderInfo = `
+                        <div class="order-info mb-4">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p><strong>Order ID:</strong> <span>${data.id}</span></p>
+                                    <p><strong>Table:</strong> <span>${data.table_number}</span></p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p><strong>Date:</strong> <span>${data.date}</span></p>
+                                    <p><strong>Time:</strong> <span>${data.time}</span></p>
+                                </div>
+                            </div>
+                            <p><strong>Status:</strong> <span class="badge ${data.status === 'pending' ? 'bg-warning' : 'bg-success'}">${data.status.charAt(0).toUpperCase() + data.status.slice(1)}</span></p>
+                        </div>
+                        
+                        <h6>Order Items</h6>
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Item</th>
+                                    <th>Quantity</th>
+                                    <th>Price</th>
+                                    <th>Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>`;
+                    
+                    // Add each item row
+                    let totalAmount = 0;
+                    data.items.forEach(item => {
+                        const subtotal = item.price * item.quantity;
+                        totalAmount += subtotal;
+                        orderInfo += `
+                            <tr>
+                                <td>${item.item_name}</td>
+                                <td>${item.quantity}</td>
+                                <td>$${item.price.toFixed(2)}</td>
+                                <td>$${subtotal.toFixed(2)}</td>
+                            </tr>`;
+                    });
+                    
+                    // Add total row
+                    orderInfo += `
+                            <tr class="total-row">
+                                <td colspan="3" class="text-end"><strong>Total</strong></td>
+                                <td><strong>$${totalAmount.toFixed(2)}</strong></td>
+                            </tr>
+                        </tbody>
+                    </table>`;
+                    
+                    // Update modal content
+                    $('#orderModalContent').html(orderInfo);
+                },
+                error: function(error) {
+                    console.error('Error fetching order details:', error);
+                    // Provide a fallback or error message
+                    $('#orderModalContent').html('<div class="alert alert-danger">Error loading order details. Please try again.</div>');
+                }
+            });
+        });
+        
+        // Filter orders by status
+        $('#filterStatus').change(function() {
+            const status = $(this).val();
+            
+            if (status === 'all') {
+                $('.order-card').show();
+            } else if (status === 'pending') {
+                $('.order-card').hide();
+                $('.order-card').each(function() {
+                    if ($(this).find('.order-status').hasClass('status-pending')) {
+                        $(this).show();
+                    }
+                });
+            } else if (status === 'completed') {
+                $('.order-card').hide();
+                $('.order-card').each(function() {
+                    if ($(this).find('.order-status').hasClass('status-completed')) {
+                        $(this).show();
+                    }
+                });
+            }
+        });
+        
+        // Filter orders by table
+        $('#filterTable').change(function() {
+            const table = $(this).val();
+            
+            if (table === 'all') {
+                $('.order-card').show();
+            } else {
+                $('.order-card').hide();
+                $('.order-card[data-table="' + table + '"]').show();
+            }
+        });
+        
+        // Search orders
+        $('#searchOrder').on('input', function() {
+            const searchText = $(this).val().toLowerCase();
+            
+            $('.order-card').each(function() {
+                const orderText = $(this).text().toLowerCase();
+                if (orderText.includes(searchText)) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        });
+    });
+    </script>
+</body>
+</html>

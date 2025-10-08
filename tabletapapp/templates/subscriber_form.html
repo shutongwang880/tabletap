@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+  <h2>{{ view.object|default:"Add Subscriber" }}</h2>
+  <form method="post">
+    {% csrf_token %}
+    {% for field in form %}
+      <div class="mb-3">
+        {{ field.label_tag }} {{ field }}
+        <div class="text-danger">{{ field.errors }}</div>
+      </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-success">Save</button>
+    <a href="{% url 'manage' %}" class="btn btn-secondary">Cancel</a>
+  </form>
+</div>
+{% endblock %}
